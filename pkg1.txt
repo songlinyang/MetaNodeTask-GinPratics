@@ -1,0 +1,413 @@
+// import (
+// 	"fmt"
+// 	"net/http"
+// 	"time"
+
+// 	"github.com/gin-gonic/gin"
+// 	"github.com/gin-gonic/gin/binding"
+// 	"github.com/go-playground/validator/v10"
+// 	"github.com/golang-jwt/jwt/v5"
+// )
+
+// func main111() {
+// 	r := gin.Default()
+// 	// r.GET("/ping", func(c *gin.Context) {
+// 	// 	c.JSON(200, gin.H{
+// 	// 		"message": "pong",
+// 	// 	})
+// 	// })
+// 	r.GET("/", func(c *gin.Context) {
+// 		c.String(200, "hello world")
+// 	})
+// 	// r.POST("/login", func(c *gin.Context) {
+// 	// 	c.JSON(200, gin.H{
+// 	// 		"message": "post login",
+// 	// 	})
+// 	// })
+// 	// r.Any("/login", func(c *gin.Context) {
+// 	// 	c.String(200, "login")
+// 	// })
+// 	//路由分组
+// 	// v1 := r.Group("/v1")
+// 	// {
+// 	// 	v1.POST("/login", func(c *gin.Context) { c.String(200, "v1 login") })
+// 	// 	v1.POST("/submit", func(c *gin.Context) { c.String(200, "v1 submit") })
+// 	// 	v1.POST("/read", func(c *gin.Context) { c.String(200, "v1 read") })
+// 	// }
+// 	// v2 := r.Group("v2")
+// 	// {
+// 	// 	v2.POST("/login", func(c *gin.Context) { c.String(200, "v2 login") })
+// 	// 	v2.POST("/submit", func(c *gin.Context) { c.String(200, "v2 submit") })
+// 	// 	v2.POST("/read", func(c *gin.Context) { c.String(200, "v2 read") })
+// 	// }
+
+// 	//RESTFUL API
+// 	// r.GET("/user", func(c *gin.Context) {
+// 	// 	c.String(200, "hello user")
+// 	// })
+// 	// r.POST("/user", func(c *gin.Context) {
+// 	// 	c.String(200, "hello user")
+
+// 	// })
+// 	r.GET("/user", func(c *gin.Context) {
+// 		c.String(200, "hello user")
+
+// 	}) // 删除
+// 	// r.PUT("/user", func(c *gin.Context) {
+// 	// 	c.String(200, "hello user")
+// 	// }) // 更新（客户端提供完整数据）
+// 	// r.PATCH("/user", func(c *gin.Context) {
+// 	// 	c.String(200, "hello user")
+// 	// }) // 更新（客户端提供需要修改的数据）
+// 	//重定向
+// 	//重定向到外部
+// 	r.GET("/test", func(ctx *gin.Context) {
+// 		ctx.Redirect(http.StatusMovedPermanently, "http://www.baidu.com")
+// 	})
+// 	//重定向到内部
+// 	r.GET("/test1", func(ctx *gin.Context) {
+// 		ctx.Redirect(http.StatusFound, "/user")
+// 	})
+
+// 	r.Run() // 监听并在 0.0.0.0:8080 上启动服务
+// }
+
+// func main2222() {
+// 	router := gin.Default()
+// 	router.Static("/assets", "./assets")         // 文件目录
+// 	router.StaticFile("/user", "./assets/2.txt") // 单独的文件
+// 	//使用html模版
+// 	router.LoadHTMLGlob("templates/*") //必须要加载，不指定加载
+// 	//router.LoadHTMLFiles("templates/template1.html", "templates/template2.html") 指定加载
+// 	router.GET("/index", func(c *gin.Context) {
+// 		c.HTML(200, "templates1.impl", gin.H{
+// 			"title": "Hello World",
+// 		})
+// 	})
+// 	// 响应 Chrome DevTools 的探测请求，返回 204 避免 404 日志噪音
+// 	router.GET("/.well-known/appspecific/com.chrome.devtools.json", func(c *gin.Context) {
+// 		c.Status(http.StatusNoContent)
+// 	})
+
+// 	// 监听并在 0.0.0.0:8080 上启动服务
+// 	router.Run(":8080")
+// }
+
+// // func main() {
+// // 	r := gin.Default()
+
+// // 	//参数绑定 传值方式1
+// // 	r.GET("/user", func(c *gin.Context) {
+// // 		user := &User{
+// // 			UserName: "111",
+// // 			Password: "222",
+// // 		}
+// // 		c.JSON(200, user)
+// // 	})
+// // 	//参数绑定 传值方式2
+
+// // 	r.Run(":8080")
+
+// // }
+// type User struct {
+// 	UserName string `json:"u" uri:"u" form:"u"`
+// 	Password string `json:"p" uri:"p" form:"p"`
+// }
+
+// // func main() {
+// // 	r := gin.Default()
+
+// // 	//参数绑定 传值方式1
+// // 	r.GET("/user/:u/:p", func(c *gin.Context) {
+// // 		user := &User{}
+// // 		err := c.ShouldBindUri(user) // 告诉通过Uri进行绑定
+
+// // 		if err != nil {
+// // 			c.JSON(400, gin.H{
+// // 				"error": err.Error(),
+// // 			})
+// // 			return
+// // 		}
+// // 		c.JSON(200, user)
+// // 	})
+// // 	//参数绑定 传值方式2 form
+// // 	r.GET("/user", func(c *gin.Context) {
+// // 		user := &User{}
+// // 		errors := c.ShouldBindQuery(user) // 告诉通过Query进行绑定
+
+// // 		if errors != nil {
+// // 			c.JSON(400, gin.H{
+// // 				"error": errors.Error(),
+// // 			})
+// // 			return
+// // 		}
+// // 		c.JSON(200, user)
+// // 	})
+
+// // 	//参数绑定 传值方式2 body
+// // 	r.GET("/user1", func(c *gin.Context) {
+// // 		user := &User{}
+// // 		errors := c.ShouldBind(user) // 自动绑定
+
+// // 		if errors != nil {
+// // 			c.JSON(400, gin.H{
+// // 				"error": errors.Error(),
+// // 			})
+// // 			return
+// // 		}
+// // 		c.JSON(200, user)
+// // 	})
+// // 	r.Run(":8080")
+
+// // }
+// // type formA struct {
+// // 	Foo string `json:"foo" form:"foo" binding:"required"`
+// // }
+
+// // type formB struct {
+// // 	Bar string `json:"bar" form:"bar" binding:"required"`
+// // }
+// // type formC struct {
+// // 	formA
+// // 	formB
+// // }
+
+// // func main() {
+// // 	r := gin.Default()
+// // 	r.GET("/user", func(c *gin.Context) {
+// // 		objA := formA{}
+// // 		objB := formB{}
+// // 		objC := formC{}
+// // 		// 读取 c.Request.Body 并将结果存入上下文。
+// // 		if errC := c.MustBindWith(&objC, binding.JSON); errC == nil {
+// // 			c.String(200, `the body should be formC`)
+// // 			if errC != nil {
+// // 				c.JSON(400, gin.H{"error": "参数错误"})
+// // 			}
+// // 		} else if err := c.MustBindWith(&objA, binding.JSON); err == nil {
+// // 			c.String(200, `the body should be formA`)
+// // 			// 这时, 复用存储在上下文中的 body。
+// // 			if err != nil {
+// // 				c.JSON(400, gin.H{"error": "参数错误"})
+// // 			}
+// // 		} else if err := c.MustBindWith(&objB, binding.JSON); err == nil {
+// // 			c.String(200, `the body should be formB JSON`)
+// // 			// 可以接受其他格式
+// // 			if err != nil {
+// // 				c.JSON(400, gin.H{"error": "参数错误"})
+// // 			}
+// // 		} else if err := c.MustBindWith(&objB, binding.XML); err == nil {
+// // 			c.String(200, `the body should be formB XML`)
+// // 			if err != nil {
+// // 			}
+// // 		} else {
+// // 			c.JSON(400, gin.H{"error": "参数错误"})
+
+// // 		}
+// // 	})
+// // 	r.Run(":8080")
+
+// // }
+// // 路由分组
+
+// // 中间件
+
+// // 全局中间件
+// func middleware1() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		fmt.Println("mw1 before")
+// 		c.Next()
+// 		fmt.Println("mw1 after")
+// 	}
+// }
+
+// func middleware2() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		fmt.Println("mw2 before")
+// 		c.Next()
+// 		fmt.Println("mw2 after")
+// 	}
+// }
+
+// // func main() {
+// // 	r := gin.Default()
+// // 	r.Use(middleware1()) //全局使用
+
+// // 	r.GET("/user", func(c *gin.Context) {
+// // 		fmt.Println("self GET")
+// // 		c.String(http.StatusOK, "self")
+// // 	})
+
+// // 	r.Use(middleware2())
+// // 	r.POST("/user", func(c *gin.Context) {
+// // 		fmt.Println("self POST")
+// // 		c.String(http.StatusOK, "self")
+// // 	})
+// // 	r.PUT("/user", func(c *gin.Context) {
+// // 		fmt.Println("self PUT")
+// // 		c.String(http.StatusOK, "self")
+// // 	})
+// // 	r.DELETE("/user", func(c *gin.Context) {
+// // 		fmt.Println("self DELETE")
+// // 		c.String(http.StatusOK, "self")
+// // 	})
+// // 	r.PATCH("/user", func(c *gin.Context) {
+// // 		fmt.Println("self PATCH")
+// // 		c.String(http.StatusOK, "self")
+// // 	})
+// // 	////指定接口方法使用
+// // 	// r.GET("/user", middleware1(), middleware2(), func(c *gin.Context) {
+// // 	// 	fmt.Println("self")
+// // 	// 	c.String(http.StatusOK, "self")
+// // 	// })
+// // 	r.Run(":8080")
+
+// // }
+// // 模拟一些私人数据
+// var secrets = gin.H{
+// 	"foo":    gin.H{"email": "foo@bar.com", "phone": "123433"},
+// 	"austin": gin.H{"email": "austin@example.com", "phone": "666"},
+// 	"lena":   gin.H{"email": "lena@guapa.com", "phone": "523443"},
+// }
+
+// // func main() {
+// // 	router := gin.Default()
+
+// // 	// 路由组使用 gin.BasicAuth() 中间件
+// // 	// gin.Accounts 是 map[string]string 的一种快捷方式
+// // 	authorized := router.Group("/admin", gin.BasicAuth(gin.Accounts{
+// // 		"foo":    "bar",
+// // 		"austin": "1234",
+// // 		"lena":   "hello2",
+// // 		"manu":   "4321",
+// // 	}), func(c *gin.Context) {
+// // 		c.JSON(http.StatusOK, gin.H{
+// // 			"msg": "Auth is not completed!",
+// // 		})
+// // 	})
+
+// // 	// /admin/secrets 端点
+// // 	// 触发 "localhost:8080/admin/secrets
+// // 	authorized.GET("/secrets", func(c *gin.Context) {
+// // 		// 获取用户，它是由 BasicAuth 中间件设置的
+// // 		user := c.MustGet(gin.AuthUserKey).(string)
+// // 		if secret, ok := secrets[user]; ok {
+// // 			c.JSON(http.StatusOK, gin.H{"user": user, "secret": secret})
+// // 		} else {
+// // 			c.JSON(http.StatusOK, gin.H{"user": user, "secret": "NO SECRET :("})
+// // 		}
+// // 	})
+// // 	router.Run(":8080")
+// // }
+
+// // 模型验证
+// // type LoginInfo struct {
+// // 	Username string `json:"username" form:"username" binding:"required"`
+// // 	Password string `json:"password" form:"password" binding:"number"`
+// // 	Email    string `json:"email" form:"email" binding:"email"`
+// // }
+// // func main() {
+// // 	r := gin.Default()
+// // 	r.GET("/user", func(c *gin.Context) {
+// // 		login := LoginInfo{}
+// // 		err := c.ShouldBindJSON(&login)
+// // 		if err != nil {
+// // 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// // 			return
+// // 		}
+
+// // 		c.JSON(http.StatusOK, login)
+// // 	})
+
+// // 	err := r.Run(":8080")
+// // 	if err != nil {
+// // 		panic(err)
+// // 	}
+// // }
+
+// // Booking 包含绑定和验证的数据
+// type Booking struct {
+// 	CheckIn  time.Time `json:"check_in" form:"check_in" binding:"required,bookabledate" time_format:"2006-01-02"`
+// 	CheckOut time.Time `json:"check_out" form:"check_out" binding:"required,gtfield=CheckIn,bookabledate" time_format:"2006-01-02"`
+// }
+
+// // 自定义验证器 bookabledate  使用  validator.Func类型
+// var bookabledate validator.Func = func(fl validator.FieldLevel) bool {
+// 	date, ok := fl.Field().Interface().(time.Time)
+// 	if ok {
+// 		today := time.Now()
+// 		if today.After(date) {
+// 			return false
+// 		}
+// 	}
+// 	return true
+// }
+
+// var jwtKey = []byte("your_secret_key")
+
+// func generateToken(username string) (string, error) {
+// 	claims := jwt.MapClaims{
+// 		"username": username,
+// 		"exp":      time.Now().Add(2 * time.Hour).Unix(),
+// 	}
+// 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+// 	return token.SignedString(jwtKey)
+// }
+
+// func main11221() {
+// 	router := gin.Default()
+// 	//登录权限控制
+// 	var login struct {
+// 		Username string `json:"username" binding:"required,min=6"`
+// 		Password string `json:"password" binding:"required,contains=!@#"`
+// 	}
+
+// 	router.POST("/login", func(c *gin.Context) {
+
+// 		if err := c.ShouldBindJSON(&login); err != nil {
+// 			c.JSON(400, gin.H{"error": err.Error()})
+// 			return
+// 		}
+// 		// 简单的模拟用户存储 (示例)，密码需满足 binding 规则
+// 		users := map[string]string{
+// 			"admin": "admin!@#",
+// 		}
+// 		if pwd, ok := users[login.Username]; ok && pwd == login.Password {
+// 			// 认证通过，返回成功信息（可改为返回 JWT / session cookie）
+// 			c.JSON(http.StatusOK, gin.H{
+// 				"message": "login ok",
+// 				"user":    login.Username,
+// 			})
+// 			return
+// 		}
+// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+
+// 	})
+
+// 	//路由分组
+// 	v1 := router.Group("/api/v1", gin.BasicAuth(gin.Accounts{
+// 		login.Username: login.Password,
+// 	}))
+// 	{
+// 		v1.GET("/users", func(ctx *gin.Context) {})
+// 		v1.POST("/users", func(ctx *gin.Context) {})
+// 		v1.PUT("/users/:id", func(ctx *gin.Context) {})
+// 	}
+
+// 	//注册自定义校验
+// 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+// 		v.RegisterValidation("bookabledate", bookabledate)
+// 	}
+
+// 	v1.POST("/bookable", getBookable)
+// 	router.Run(":8085")
+// }
+
+// func getBookable(c *gin.Context) {
+// 	var b Booking
+// 	if err := c.ShouldBindWith(&b, binding.JSON); err == nil {
+// 		c.JSON(http.StatusOK, gin.H{"message": "Booking dates are valid!"})
+// 	} else {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 	}
+// }
